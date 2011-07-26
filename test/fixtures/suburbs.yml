@@ -12,3 +12,8 @@ bondi:
   id: 3
   name: Bondi
   city_id: 2 
+
+compton:
+  id: 4
+  name: Compton
+  city_id: 3
