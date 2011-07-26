@@ -1,6 +1,8 @@
-CascadingSelectsWithBackbone::Application.routes.draw do
+CascadingSelectsWithBackbone::Application.routes.draw do  
   resources :countries do
-      resources :cities
+      resources :cities, :shallow => true do
+        resources :suburbs
+      end
   end
 
   # The priority is based upon order of creation:
