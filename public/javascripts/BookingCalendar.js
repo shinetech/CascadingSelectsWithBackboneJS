@@ -84,8 +84,6 @@ $(function(){
         
         initialize: function(){
             _.bindAll(this, 'render');
-            this.model.bind('change', this.render);
-            this.model.view = this;
         },
         
         render: function(){
@@ -146,9 +144,9 @@ $(function(){
         countries.cities = cities;
         cities.suburbs = suburbs;      
         
-        var countriesView = new CategoriesView({el: $("#country"), collection: countries});
-        var citiesView = new CategoriesView({el: $("#city"), collection: cities});
-        var suburbsView = new CategoriesView({el: $("#suburb"),collection: suburbs});
+        new CategoriesView({el: $("#country"), collection: countries});
+        new CategoriesView({el: $("#city"), collection: cities});
+        new CategoriesView({el: $("#suburb"),collection: suburbs});
         
         countries.fetch();
         
