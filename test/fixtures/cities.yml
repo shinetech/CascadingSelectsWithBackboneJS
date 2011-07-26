@@ -1,0 +1,11 @@
+melbourne:
+  name: Melbourne
+  country: Australia 
+
+sydney:
+  name: Sydney
+  country: Australia
+  
+los_angeles:
+  name: Los Angeles
+  country: usa 
