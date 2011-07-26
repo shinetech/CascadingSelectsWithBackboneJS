@@ -21,14 +21,14 @@ $(function(){
         url: 'countries',
         model: Country,
         setSelectedId: function(countryId) {
-            this.cities.setParentId(countryId);
+            this.children.setParentId(countryId);
         }
     });
 
     var Cities = Categories.extend({
         model: City,
         setSelectedId: function(cityId) {
-            this.suburbs.setParentId(cityId);
+            this.children.setParentId(cityId);
         },
         setSelected: function(city) {
             this.selected = city;
@@ -43,7 +43,7 @@ $(function(){
             }
             
             this.countryId = countryId;
-            this.suburbs.clear();
+            this.children.clear();
         },
         setCountryId: function(countryId) {
             this.url = 'countries/' + countryId + '/cities';
@@ -141,8 +141,8 @@ $(function(){
         var cities = new Cities();        
         var suburbs = new Suburbs();
         
-        countries.cities = cities;
-        cities.suburbs = suburbs;      
+        countries.children = cities;
+        cities.children = suburbs;      
         
         new CategoriesView({el: $("#country"), collection: countries});
         new CategoriesView({el: $("#city"), collection: cities});
