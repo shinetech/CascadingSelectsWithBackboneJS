@@ -1,11 +1,14 @@
 glen_iris:
+  id: 1
   name: Glen Iris
   city_id: 1
 
 brunswick:
+  id: 2
   name: Brunswick
   city_id: 1
   
 bondi:
+  id: 3
   name: Bondi
   city_id: 2 

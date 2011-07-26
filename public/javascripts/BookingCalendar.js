@@ -5,8 +5,8 @@ $(function(){
     // ----------
 
     var Country = Backbone.Model.extend();
-    var City = Backbone.Model.extend();
-    var Suburb = Backbone.Model.extend(); 
+    var City = Backbone.Model.extend({urlRoot:'cities'});
+    var Suburb = Backbone.Model.extend({urlRoot:'suburbs'}); 
     
     // Collection Classes
     // ---------------
@@ -32,7 +32,7 @@ $(function(){
         },
         setSelected: function(city) {
             this.selected = city;
-            this.setCountryId(city.get('countryId'));           
+            this.setCountryId(city.get('country_id'));           
         },
         setParentId: function(countryId){
             if (countryId) {
@@ -58,7 +58,7 @@ $(function(){
         },
         setSelected: function(suburb) {
             this.selected = suburb;
-            this.setCityId(suburb.get('cityId'));      
+            this.setCityId(suburb.get('city_id'));      
         },
         setParentId: function(cityId) {
             if (cityId) {
@@ -150,13 +150,13 @@ $(function(){
         
         countries.fetch();
         
-//        new Suburb({id:3}).fetch({success: function(suburb){
-//            suburbs.setSelected(suburb);
-//            new City({id: suburb.get('cityId')}).fetch({success: function(city){
-//                cities.setSelected(city);
-//                $('#country').val(city.get('countryId'));
-//            }});
-//        }});        
+        new Suburb({id:3}).fetch({success: function(suburb){
+            suburbs.setSelected(suburb);
+            new City({id: suburb.get('city_id')}).fetch({success: function(city){
+                cities.setSelected(city);
+                $('#country').val(city.get('country_id'));
+            }});
+        }});        
     }
     
     setup();
