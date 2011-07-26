@@ -1,6 +1,4 @@
 CascadingSelectsWithBackbone::Application.routes.draw do
-  resources :parents
-
   # The priority is based upon order of creation:
   # first created -> highest priority.
 
