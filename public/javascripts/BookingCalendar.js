@@ -4,10 +4,9 @@ $(function(){
     // Model Classes
     // ----------
 
-    var Network = Backbone.Model.extend({});
-    var Site = Backbone.Model.extend({urlRoot: 'service/sites'});
-    var Area = Backbone.Model.extend({urlRoot: 'service/areas'});
-    var Product = Backbone.Model.extend({urlRoot: 'service/products'}); 
+    var Country = Backbone.Model.extend({});
+    var City = Backbone.Model.extend({urlRoot: 'cities'});
+    var Suburb = Backbone.Model.extend({urlRoot: 'suburbs'}); 
     
     // Collection Classes
     // ---------------
@@ -18,93 +17,60 @@ $(function(){
         }       
     });
     
-    var Networks = Categories.extend({
-        url: 'service/networks',
-        model: Network,
-        setSelectedId: function(networkId) {
-            this.sites.setParentId(networkId);
+    var Countries = Categories.extend({
+        url: 'countries',
+        model: Country,
+        setSelectedId: function(countryId) {
+            this.cities.setParentId(countryId);
         }
     });
 
-    var Sites = Categories.extend({
-        model: Site,
-        setSelectedId: function(siteId) {
-            this.areas.setParentId(siteId);
+    var Cities = Categories.extend({
+        model: City,
+        setSelectedId: function(cityId) {
+            this.suburbs.setParentId(cityId);
         },
-        setSelected: function(site) {
-            this.selected = site;
-            this.setNetworkId(site.get('networkId'));           
+        setSelected: function(city) {
+            this.selected = city;
+            this.setCountryId(city.get('countryId'));           
         },
-        setParentId: function(networkId){
-            if (networkId) {
-                this.setNetworkId(networkId);
+        setParentId: function(countryId){
+            if (countryId) {
+                this.setCountryId(countryId);
             }
             else {
                 this.reset();
             }
             
-            this.networkId = networkId;
-            this.areas.clear();
+            this.countryId = countryId;
+            this.suburbs.clear();
         },
-        setNetworkId: function(networkId) {
-            this.url = 'service/networks/' + networkId + '/sites';
+        setCountryId: function(countryId) {
+            this.url = 'countries/' + countryId + '/cities';
             this.fetch();           
         }                   
     });
 
-    var Areas = Categories.extend({
-        model: Area,
-        setSelectedId: function(areaId) {
-            if (this.products) {
-                this.products.setParentId(areaId);
-            }
+    var Suburbs = Categories.extend({
+        model: Suburb,
+        setSelectedId: function(suburbId) {
+            this.selected = this.get(suburbId);
         },
-        setSelected: function(area) {
-            this.selected = area;
-            this.setSiteId(area.get('siteId'));         
+        setSelected: function(suburb) {
+            this.selected = suburb;
+            this.setCityId(suburb.get('cityId'));      
         },
-        setParentId: function(siteId) {
-            if (siteId) {
-                this.setSiteId(siteId);
-            } else {
-                this.reset();
-            }
-            
-            this.siteId = siteId;
-            this.clear();           
-        },
-        setSiteId: function(siteId) {
-            this.url = 'service/sites/' + siteId + '/areas';
-            this.fetch();           
-        },
-        clear: function() {
-            Categories.prototype.clear.call(this);
-            if (this.products) {
-                this.products.clear();
-            }
-        }       
-    });
-
-    var Products = Categories.extend({
-        model: Product,
-        setSelectedId: function(productId) {
-            this.selected = this.get(productId);
-        },
-        setSelected: function(product) {
-            this.selected = product;
-            this.setAreaId(product.get('areaId'));      
-        },
-        setParentId: function(areaId) {
-            if (areaId) {
-                this.setAreaId(areaId);
+        setParentId: function(cityId) {
+            if (cityId) {
+                this.setCityId(cityId);
             } else {
                 this.clear();
             }
             
-            this.areaId = areaId;           
+            this.cityId = cityId;           
         },
-        setAreaId: function(areaId) {
-            this.url = 'service/areas/' + areaId + '/products';
+        setCityId: function(cityId) {
+            this.url = 'cities/' + cityId + '/suburbs';
             this.fetch();           
         }
     });
@@ -112,7 +78,7 @@ $(function(){
     // Views
     // --------------
     
-    // Used for displaying a network, site, area or product
+    // Used for displaying a country, city, city or suburb
     var CategoryView = Backbone.View.extend({
         tagName: "option",
         
@@ -128,7 +94,7 @@ $(function(){
         }
     });
     
-    // Used for displaying a list of networks, sites, areas or products
+    // Used for displaying a list of countries, cities, cities or suburbs
     var CategoriesView = Backbone.View.extend({
         events: {
             "change": "changeSelected"
@@ -146,8 +112,8 @@ $(function(){
             return this;
         },
         
-        addOne: function(site){
-            var categoryView = new CategoryView({ model: site });
+        addOne: function(city){
+            var categoryView = new CategoryView({ model: city });
             this.categoryViews.push(categoryView);          
             $(this.el).append(categoryView.render().el);
         },
@@ -173,32 +139,26 @@ $(function(){
         
     // Bootstrap everything in a function to avoid polluting the global namespace
     function setup(){
-        var networks = new Networks();      
-        var sites = new Sites();        
-        var areas = new Areas();        
-        var products = new Products();
+        var countries = new Countries();        
+        var cities = new Cities();        
+        var suburbs = new Suburbs();
         
-        networks.sites = sites;
-        sites.areas = areas;
-        areas.products = products;      
+        countries.cities = cities;
+        cities.suburbs = suburbs;      
         
-        var networksView = new CategoriesView({el: $("#network"), collection: networks});
-        var sitesView = new CategoriesView({el: $("#site"), collection: sites});
-        var areasView = new CategoriesView({el: $("#area"), collection: areas});
-        var productsView = new CategoriesView({el: $("#product"),collection: products});
+        var countriesView = new CategoriesView({el: $("#country"), collection: countries});
+        var citiesView = new CategoriesView({el: $("#city"), collection: cities});
+        var suburbsView = new CategoriesView({el: $("#suburb"),collection: suburbs});
         
-        networks.fetch();
+        countries.fetch();
         
-        new Product({id:3}).fetch({success: function(product){
-            products.setSelected(product);
-            new Area({id: product.get('areaId')}).fetch({success: function(area){
-                areas.setSelected(area);
-                new Site({id: area.get('siteId')}).fetch({success: function(site){
-                    sites.setSelected(site);
-                    $('#network').val(site.get('networkId'));
-                }});
-            }});
-        }});        
+//        new Suburb({id:3}).fetch({success: function(suburb){
+//            suburbs.setSelected(suburb);
+//            new City({id: suburb.get('cityId')}).fetch({success: function(city){
+//                cities.setSelected(city);
+//                $('#country').val(city.get('countryId'));
+//            }});
+//        }});        
     }
     
     setup();
