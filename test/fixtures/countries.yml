@@ -1,5 +1,7 @@
 australia:
+  id: 1
   name: Australia
 
 usa:
+  id: 2
   name: USA

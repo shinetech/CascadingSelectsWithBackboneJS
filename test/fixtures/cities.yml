@@ -1,11 +1,11 @@
 melbourne:
   name: Melbourne
-  country: Australia 
+  country_id: 1 
 
 sydney:
   name: Sydney
-  country: Australia
+  country_id: 1
   
 los_angeles:
   name: Los Angeles
-  country: usa 
+  country_id: 2 
