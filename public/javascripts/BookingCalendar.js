@@ -4,9 +4,9 @@ $(function(){
     // Model Classes
     // ----------
 
-    var Country = Backbone.Model.extend({});
-    var City = Backbone.Model.extend({urlRoot: 'cities'});
-    var Suburb = Backbone.Model.extend({urlRoot: 'suburbs'}); 
+    var Country = Backbone.Model.extend();
+    var City = Backbone.Model.extend();
+    var Suburb = Backbone.Model.extend(); 
     
     // Collection Classes
     // ---------------
