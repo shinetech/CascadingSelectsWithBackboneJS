@@ -5,63 +5,32 @@ $(function(){
         model: Country
     });
 
-    // Used for displaying a country, city, city or suburb
-    var CategoryView = Backbone.View.extend({
+    var CountryView = Backbone.View.extend({
         tagName: "option",
         
         initialize: function(){
             _.bindAll(this, 'render');
-        },
-        
+        },       
         render: function(){
             $(this.el).attr('value', this.model.get('id')).html(this.model.get('name'));
             return this;
         }
     });
     
-    // Used for displaying a list of countries, cities, cities or suburbs
-    var CategoriesView = Backbone.View.extend({
-        events: {
-            "change": "changeSelected"
-        },
-        
+    var CountriesView = Backbone.View.extend({
         initialize: function(){
-            _.bindAll(this, 'addOne', 'addAll', 'render');
-
-            this.categoryViews = [];            
+            _.bindAll(this, 'addOne', 'addAll');
             this.collection.bind('reset', this.addAll);
-            this.collection.bind('all', this.render);
-        },
-        
-        render: function(){
-            return this;
-        },
-        
+        },        
         addOne: function(city){
-            var categoryView = new CategoryView({ model: city });
-            this.categoryViews.push(categoryView);          
-            $(this.el).append(categoryView.render().el);
-        },
-        
+            $(this.el).append(new CountryView({ model: city }).render().el);
+        },        
         addAll: function(){
-            // Clear out the old options
-            _.each(this.categoryViews, function(categoryView) { categoryView.remove(); });
-            this.categoryViews = [];
-            $(this.el).attr('disabled', this.collection.length < 1);            
             this.collection.each(this.addOne);
-            
-            var selected = this.collection.selected;
-            if (selected) {
-                $(this.el).val(selected.id);    
-            }                       
-        },
-        
-        changeSelected: function(e){
-            this.collection.setSelectedId($(this.el).val());
         }
     });
             
     var countries = new Countries();    
-    new CategoriesView({el: $("#country"), collection: countries});    
+    new CountriesView({el: $("#country"), collection: countries});    
     countries.fetch();
 });
