@@ -1,79 +1,10 @@
-// Load the application once the DOM is ready, using `jQuery.ready`:
 $(function(){
-
-    // Model Classes
-    // ----------
-
     var Country = Backbone.Model.extend();
-    var City = Backbone.Model.extend({urlRoot:'cities'});
-    var Suburb = Backbone.Model.extend({urlRoot:'suburbs'}); 
-    
-    // Collection Classes
-    // ---------------
-    var Categories = Backbone.Collection.extend({
-        clear: function() {
-            this.reset();
-            this.selected = null;
-        }       
-    });
-    
-    var Countries = Categories.extend({
+    var Countries = Backbone.Collection.extend({
         url: 'countries',
-        model: Country,
-        setSelectedId: function(countryId) {
-            this.children.setParentId(countryId);
-        }
+        model: Country
     });
 
-    var Cities = Categories.extend({
-        model: City,
-        setSelectedId: function(cityId) {
-            this.children.setParentId(cityId);
-        },
-        setSelected: function(city) {
-            this.selected = city;
-            this.setCountryId(city.get('country_id'));           
-        },
-        setParentId: function(countryId){
-            if (countryId) {
-                this.setCountryId(countryId);
-            }
-            else {
-                this.reset();
-            }
-            this.children.clear();
-        },
-        setCountryId: function(countryId) {
-            this.url = 'countries/' + countryId + '/cities';
-            this.fetch();           
-        }                   
-    });
-
-    var Suburbs = Categories.extend({
-        model: Suburb,
-        setSelectedId: function(suburbId) {
-            this.selected = this.get(suburbId);
-        },
-        setSelected: function(suburb) {
-            this.selected = suburb;
-            this.setCityId(suburb.get('city_id'));      
-        },
-        setParentId: function(cityId) {
-            if (cityId) {
-                this.setCityId(cityId);
-            } else {
-                this.clear();
-            }
-        },
-        setCityId: function(cityId) {
-            this.url = 'cities/' + cityId + '/suburbs';
-            this.fetch();           
-        }
-    });
-  
-    // Views
-    // --------------
-    
     // Used for displaying a country, city, city or suburb
     var CategoryView = Backbone.View.extend({
         tagName: "option",
@@ -129,31 +60,8 @@ $(function(){
             this.collection.setSelectedId($(this.el).val());
         }
     });
-    
-        
-    // Bootstrap everything in a function to avoid polluting the global namespace
-    function setup(){
-        var countries = new Countries();        
-        var cities = new Cities();        
-        var suburbs = new Suburbs();
-        
-        countries.children = cities;
-        cities.children = suburbs;      
-        
-        new CategoriesView({el: $("#country"), collection: countries});
-        new CategoriesView({el: $("#city"), collection: cities});
-        new CategoriesView({el: $("#suburb"),collection: suburbs});
-        
-        countries.fetch();
-        
-        new Suburb({id:3}).fetch({success: function(suburb){
-            suburbs.setSelected(suburb);
-            new City({id: suburb.get('city_id')}).fetch({success: function(city){
-                cities.setSelected(city);
-                $('#country').val(city.get('country_id'));
-            }});
-        }});        
-    }
-    
-    setup();
+            
+    var countries = new Countries();    
+    new CategoriesView({el: $("#country"), collection: countries});    
+    countries.fetch();
 });
