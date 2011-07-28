@@ -62,7 +62,15 @@ $(function(){
 
     var CitiesView = LocationsView.extend({
         setSelectedId: function(cityId) {
-            // Do nothing - for now
+            this.suburbsView.collection.url = "cities/" + cityId + "/suburbs";
+            this.suburbsView.collection.fetch();
+            $(this.suburbsView.el).attr('disabled', false);
+        }        
+    });    
+
+    var SuburbsView = LocationsView.extend({
+        setSelectedId: function(cityId) {
+            // Do nothing
         }        
     });    
     
@@ -70,8 +78,10 @@ $(function(){
     
     var countriesView = new CountriesView({el: $("#country"), collection: countries});
     var citiesView = new CitiesView({el: $("#city"), collection: new Cities()});
+    var suburbsView = new SuburbsView({el: $("#suburb"), collection: new Suburbs()});
     
     countriesView.citiesView = citiesView;
+    citiesView.suburbsView = suburbsView;
     
     countries.fetch();
 });
