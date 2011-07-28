@@ -29,6 +29,10 @@ $(function(){
     });
     
     var LocationsView = Backbone.View.extend({
+        events: {
+            "change": "changeSelected"
+        },
+        
         initialize: function(){
             _.bindAll(this, 'addOne', 'addAll');
             this.collection.bind('reset', this.addAll);
@@ -38,14 +42,32 @@ $(function(){
         },        
         addAll: function(){
             this.collection.each(this.addOne);
-        }
+        },
+        changeSelected: function(){
+            this.setSelectedId($(this.el).val());
+        }        
     });
             
+    var CountriesView = LocationsView.extend({
+        setSelectedId: function(countryId) {
+            this.citiesView.collection.url = "countries/" + countryId + "/cities";
+            this.citiesView.collection.fetch();
+            $(this.citiesView.el).attr('disabled', false);
+        }
+    });    
+
+    var CitiesView = LocationsView.extend({
+        setSelectedId: function(cityId) {
+            // Do nothing - for now
+        }        
+    });    
+    
     var countries = new Countries();
     
-    new LocationsView({el: $("#country"), collection: countries});
-    new LocationsView({el: $("#cities"), collection: new Cities()});
-    new LocationsView({el: $("#suburbs"), collection: new Suburbs()});
+    var countriesView = new CountriesView({el: $("#country"), collection: countries});
+    var citiesView = new CitiesView({el: $("#city"), collection: new Cities()});
+    
+    countriesView.citiesView = citiesView;
     
     countries.fetch();
 });
