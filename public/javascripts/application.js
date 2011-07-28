@@ -35,12 +35,16 @@ $(function(){
         
         initialize: function(){
             _.bindAll(this, 'addOne', 'addAll');
-            this.collection.bind('reset', this.addAll);
+            this.collection.bind('reset', this.addAll);            
         },        
         addOne: function(location){
-            $(this.el).append(new LocationView({ model: location }).render().el);
+            var locationView = new LocationView({ model: location });
+            this.locationViews.push(locationView);
+            $(this.el).append(locationView.render().el);
         },        
         addAll: function(){
+            _.each(this.locationViews, function(locationView) { locationView.remove() });
+            this.locationViews = [];
             this.collection.each(this.addOne);
         },
         changeSelected: function(){
