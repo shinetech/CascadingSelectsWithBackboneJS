@@ -49,25 +49,29 @@ $(function(){
         },
         changeSelected: function(){
             this.setSelectedId($(this.el).val());
-        }        
+        },
+        populateFrom: function(url) {
+            this.collection.url = url;
+            this.collection.fetch();
+            this.setDisabled(false);
+        },
+        setDisabled: function(disabled) {
+            $(this.el).attr('disabled', disabled);
+        }
     });
             
     var CountriesView = LocationsView.extend({
         setSelectedId: function(countryId) {
-            this.citiesView.collection.url = "countries/" + countryId + "/cities";
-            this.citiesView.collection.fetch();
-            $(this.citiesView.el).attr('disabled', false);
+            this.citiesView.populateFrom("countries/" + countryId + "/cities");
             
             this.suburbsView.collection.reset();
-            $(this.suburbsView.el).attr('disabled', true);
+            this.suburbsView.setDisabled(true);
         }
     });    
 
     var CitiesView = LocationsView.extend({
         setSelectedId: function(cityId) {
-            this.suburbsView.collection.url = "cities/" + cityId + "/suburbs";
-            this.suburbsView.collection.fetch();
-            $(this.suburbsView.el).attr('disabled', false);
+            this.suburbsView.populateFrom("cities/" + cityId + "/suburbs");
         }        
     });    
 
