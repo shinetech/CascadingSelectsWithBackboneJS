@@ -65,8 +65,8 @@ $(function(){
             
     var CountriesView = LocationsView.extend({
         setSelectedId: function(countryId) {
-            this.citiesView.selectedId = null;            
-            this.citiesView.populateFrom("countries/" + countryId + "/cities");
+            this.citiesView.selectedId = null;
+            this.citiesView.setCountryId(countryId);
             
             this.suburbsView.collection.reset();
             this.suburbsView.setDisabled(true);
@@ -75,14 +75,20 @@ $(function(){
 
     var CitiesView = LocationsView.extend({
         setSelectedId: function(cityId) {
-            this.suburbsView.selectedId = null;            
-            this.suburbsView.populateFrom("cities/" + cityId + "/suburbs");
-        }        
+            this.suburbsView.selectedId = null;
+            this.suburbsView.setCityId(cityId);
+        },
+        setCountryId: function(countryId) {
+            this.populateFrom("countries/" + countryId + "/cities");
+        }
     });    
 
     var SuburbsView = LocationsView.extend({
         setSelectedId: function(cityId) {
             // Do nothing
+        },
+        setCityId: function(cityId) {
+            this.populateFrom("cities/" + cityId + "/suburbs");
         }
     });    
     
@@ -101,12 +107,12 @@ $(function(){
     new Suburb({id:suburbId}).fetch({success: function(suburb){
         suburbsView.selectedId = suburb.id;        
         var cityId = suburb.get('city_id');
-        suburbsView.populateFrom("cities/" + cityId + "/suburbs");
+        suburbsView.setCityId(cityId);
         
         new City({id: cityId}).fetch({success: function(city){
             citiesView.selectedId = city.id;
             var countryId = city.get('country_id');
-            citiesView.populateFrom("countries/" + countryId + "/cities");
+            citiesView.setCountryId(countryId);
             
             countriesView.selectedId = countryId;
             countries.fetch();
