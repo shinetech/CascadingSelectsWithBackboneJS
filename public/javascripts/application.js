@@ -46,6 +46,9 @@ $(function(){
             _.each(this.locationViews, function(locationView) { locationView.remove(); });
             this.locationViews = [];
             this.collection.each(this.addOne);
+            if (this.selectedId) {
+                $(this.el).val(this.selectedId);
+            }
         },
         changeSelected: function(){
             this.setSelectedId($(this.el).val());
@@ -62,6 +65,7 @@ $(function(){
             
     var CountriesView = LocationsView.extend({
         setSelectedId: function(countryId) {
+            this.citiesView.selectedId = null;            
             this.citiesView.populateFrom("countries/" + countryId + "/cities");
             
             this.suburbsView.collection.reset();
@@ -71,6 +75,7 @@ $(function(){
 
     var CitiesView = LocationsView.extend({
         setSelectedId: function(cityId) {
+            this.suburbsView.selectedId = null;            
             this.suburbsView.populateFrom("cities/" + cityId + "/suburbs");
         }        
     });    
@@ -91,21 +96,20 @@ $(function(){
     countriesView.suburbsView = suburbsView;
     citiesView.suburbsView = suburbsView;
     
-    countries.fetch();
-    
     var suburbId = 3;
     
     new Suburb({id:suburbId}).fetch({success: function(suburb){
+        suburbsView.selectedId = suburb.id;        
         var cityId = suburb.get('city_id');
         suburbsView.populateFrom("cities/" + cityId + "/suburbs");
-        $(suburbsView.el).val(suburbId);
         
         new City({id: cityId}).fetch({success: function(city){
+            citiesView.selectedId = city.id;
             var countryId = city.get('country_id');
-            citiesView.populateFrom("countries/" + countryId + "/cities");            
-            $(citiesView.el).val(cityId);
+            citiesView.populateFrom("countries/" + countryId + "/cities");
             
-            $(countriesView.el).val(countryId)
+            countriesView.selectedId = countryId;
+            countries.fetch();
         }});
     }});
 });
