@@ -1,7 +1,7 @@
 $(function(){
     var Country = Backbone.Model.extend();
-    var City = Backbone.Model.extend();
-    var Suburb = Backbone.Model.extend();
+    var City = Backbone.Model.extend({urlRoot:'cities'});
+    var Suburb = Backbone.Model.extend({urlRoot:'suburbs'});
     
     var Countries = Backbone.Collection.extend({
         url: 'countries',
@@ -78,7 +78,7 @@ $(function(){
     var SuburbsView = LocationsView.extend({
         setSelectedId: function(cityId) {
             // Do nothing
-        }        
+        }
     });    
     
     var countries = new Countries();
@@ -92,4 +92,20 @@ $(function(){
     citiesView.suburbsView = suburbsView;
     
     countries.fetch();
+    
+    var suburbId = 3;
+    
+    new Suburb({id:suburbId}).fetch({success: function(suburb){
+        var cityId = suburb.get('city_id');
+        suburbsView.populateFrom("cities/" + cityId + "/suburbs");
+        $(suburbsView.el).val(suburbId);
+        
+        new City({id: cityId}).fetch({success: function(city){
+            var countryId = city.get('country_id');
+            citiesView.populateFrom("countries/" + countryId + "/cities");            
+            $(citiesView.el).val(cityId);
+            
+            $(countriesView.el).val(countryId)
+        }});
+    }});
 });
