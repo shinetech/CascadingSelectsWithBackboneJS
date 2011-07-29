@@ -43,7 +43,7 @@ $(function(){
             $(this.el).append(locationView.render().el);
         },        
         addAll: function(){
-            _.each(this.locationViews, function(locationView) { locationView.remove() });
+            _.each(this.locationViews, function(locationView) { locationView.remove(); });
             this.locationViews = [];
             this.collection.each(this.addOne);
         },
@@ -57,6 +57,9 @@ $(function(){
             this.citiesView.collection.url = "countries/" + countryId + "/cities";
             this.citiesView.collection.fetch();
             $(this.citiesView.el).attr('disabled', false);
+            
+            this.suburbsView.collection.reset();
+            $(this.suburbsView.el).attr('disabled', true);
         }
     });    
 
@@ -81,6 +84,7 @@ $(function(){
     var suburbsView = new SuburbsView({el: $("#suburb"), collection: new Suburbs()});
     
     countriesView.citiesView = citiesView;
+    countriesView.suburbsView = suburbsView;
     citiesView.suburbsView = suburbsView;
     
     countries.fetch();
