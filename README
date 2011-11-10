@@ -1,1 +1,5 @@
-Source code for http://blog.shinetech.com/2011/07/25/cascading-select-boxes-with-backbone-js/ 
+Source code for http://blog.shinetech.com/2011/07/25/cascading-select-boxes-with-backbone-js
+
+Note that the data used in the demo is store as fixtures, not seed data. Thus you should use the following to load it:
+
+rake db:fixtures:load
